@@ -20,7 +20,7 @@
 
 // Program variable definitions
 unsigned char TonLED4 = 127;    // LED brightness PWM value
-unsigned char PWMperiod;        // PWM period counter for PWM loops
+unsigned char PWMperiod = 255;        // PWM period counter for PWM loops
 unsigned int period = 460;      // Sound period value for later activities
 
 int main(void)
@@ -41,20 +41,43 @@ int main(void)
         {
             TonLED4 += 1;
         }
-        
-        // PWM LED4 brightness
-        PWMperiod = 255;
-        while(PWMperiod != 0)
+        //assignment
+        PWMperiod = 128;
+        for(unsigned char PWMperiod = 255; PWMperiod != 0; PWMperiod --)
         {
             if(TonLED4 == PWMperiod)
             {
                 LED4 = 1;
             }
-            PWMperiod --;
             __delay_us(20);
         }
         LED4 = 0;
+  if(PWMperiod == 128)
+        {
+            LED5 = 1;
+        }
+        else
+        {
+            LED5 = 0;
+        }
+
+// Change pitch
+        if(SW4 == 0)
+        {
+            period -= 1;
+        }
         
+        if(SW5 == 0)
+        {
+            period += 1;
+        }
+        
+        // Make a tone
+        for(unsigned char cycles = 25; cycles != 0; cycles--)
+        {
+            BEEPER = !BEEPER;
+            for(unsigned int p = period; p != 0; p--);
+        }
         // Activate bootloader if SW1 is pressed.
         if(SW1 == 0)
         {
@@ -68,19 +91,23 @@ int main(void)
  * 1. The main part of the program contains the 'while(1)' loop. What condition
  *    is being evaluated within its brackets? (Hint: Think about the Boolean
  *    variables from Activity 2-Variables.) How many times will this loop run?
- * 
+ * The condition it is checking for is whether or not SW2 or SW3 is pressed.
+ The loop runs for as long as the buttons are pressed.
  * 2. There is a second 'while(PWMperiod != 0)' loop inside the first while
  *    loop. What condition is being evaluated inside this while statement's
  *    brackets? How many times will the contents of this inner loop run?
- * 
+ * The condition being evaluated is if PWMperiod is equal to zero or not.
+ The loop will run until the condition is met.
  * 3. What condition is being evaluated by the if statement inside the loop?
  *    What happens when the if condition is true?
- * 
+ * The condition being evaluated is if TONLED4 is equal to PWMperiod.
+ If the condition is satisfied LED4 will light up.
  * 4. Pressing the up or down buttons (SW3 and SW2) will increase or decrease
  *    the brightness of LED D4 using PWM (Pulse-Width Modulation). How many 
  *    different brightnesses can the LED have? What would the step size of one
  *    brightness level change be if it was expressed as a percentage?
- * 
+ * The LED can have 255 different brightnesses.
+ The percentage per level change would be ~0.39%.
  * 5. The while loop needs three statements to perform its function. First, the
  *    assignment statement 'PWMperiod = 255;' sets the PWMperiod variable. Next,
  *    the condition 'while(PWMperiod != 0)' runs the contents of the loop code
@@ -109,7 +136,7 @@ int main(void)
         LED4 = 0;
         
  *    What is an advantage of using a for loop instead of a while loop?
- * 
+ * A for loop can have its duration set directly.
  * 6. The 'for' loop, above, redefines the PWMperiod variable in the 
  *    initialization statement: 'for(unsigned char PWMperiod = 255; ...'
  * 
@@ -137,10 +164,11 @@ int main(void)
  *    Compile and run the code. When the program runs, the PWMperiod variable
  *    inside the for loop will count down from 255 to 0, and should be 0 when
  *    the loop finishes. Is LED D5 lit? What must the value of PWMperiod be?
- * 
+ * LED D5 is lit.
+ The value PWperiod has to be for the LED it light up is 128.
  *    Can you remove the global PWMperiod variable definition from the top of 
  *    the program now that PWMperiod is being defined in the for loop?
- * 
+ * No, if you remove the variable the build fails.
  * 7. Add this code below the PWM loop to generate a tone:
                 
         // Change pitch
